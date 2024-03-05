@@ -170,19 +170,23 @@ async function main() {
 
         let phoneNumbers = result.phone
 
+        item["Рабочий телефон"] = result.phone;
+        item["Частный e-mail"] = result.email;
+        item["Корпоративный сайт"] = result.url;
+
         if (phoneNumbers.length > 0) {
           let split = phoneNumbers.split(",")
-          let result = []
+          let resultPhone = []
 
           for (let i = 0; i < split.length; i++) {
             if (split[i][0] !== '%'){
-              result.push(split[i])
+              resultPhone.push(split[i])
             }
           }
 
           let stringPhone = ""
-          for (let i = 1; i < result.length; i++) {
-            stringPhone += result[i].slice(1, result[i].length)
+          for (let i = 1; i < resultPhone.length; i++) {
+            stringPhone += resultPhone[i].slice(1, resultPhone[i].length)
             stringPhone += ", "
           }
           stringPhone = stringPhone.slice(0, -2)
@@ -192,12 +196,12 @@ async function main() {
 
           new Promise((res, rej) => {
             workbook.eachSheet((worksheet, sheetId) => {
-
               res((worksheet.getCell(`A${item['﻿ID']}`).value = item["Название лида"]));
               res((worksheet.getCell(`B${item['﻿ID']}`).value = item["ИНН"]));
-              res((worksheet.getCell(`C${item['﻿ID']}`).value = stringPhone));
-              res((worksheet.getCell(`D${item['﻿ID']}`).value = result.email));
-              res((worksheet.getCell(`E${item['﻿ID']}`).value = result.url));
+              res((worksheet.getCell(`C${item['﻿ID']}`).value = item["Комментарий"]));
+              res((worksheet.getCell(`D${item['﻿ID']}`).value = stringPhone));
+              res((worksheet.getCell(`E${item['﻿ID']}`).value = result.email));
+              res((worksheet.getCell(`F${item['﻿ID']}`).value = result.url));
               worksheet.commit();
             })
           }).then(workbook.xlsx.writeFile("promise.xlsx"))
@@ -208,20 +212,16 @@ async function main() {
 
           new Promise((res, rej) => {
             workbook.eachSheet((worksheet, sheetId) => {
-
               res((worksheet.getCell(`A${item['﻿ID']}`).value = item["Название лида"]));
               res((worksheet.getCell(`B${item['﻿ID']}`).value = item["ИНН"]));
-              res((worksheet.getCell(`C${item['﻿ID']}`).value = ""));
-              res((worksheet.getCell(`D${item['﻿ID']}`).value = result.email));
-              res((worksheet.getCell(`E${item['﻿ID']}`).value = result.url));
+              res((worksheet.getCell(`C${item['﻿ID']}`).value = item["Комментарий"]));
+              res((worksheet.getCell(`D${item['﻿ID']}`).value = ""));
+              res((worksheet.getCell(`E${item['﻿ID']}`).value = result.email));
+              res((worksheet.getCell(`F${item['﻿ID']}`).value = result.url));
               worksheet.commit();
             })
           }).then(workbook.xlsx.writeFile("promise.xlsx"))
         }
-
-        item["Рабочий телефон"] = result.phone;
-        item["Частный e-mail"] = result.email;
-        item["Корпоративный сайт"] = result.url;
 
         await page.close();
 
